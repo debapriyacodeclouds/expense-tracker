@@ -12,7 +12,26 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        //
+        $expenses = Expense::latest()->get();
+
+        $totalExpense = Expense::sum('amount');
+
+        $todayExpense = Expense::whereDate(
+            'expense_date',
+            today()
+        )->sum('amount');
+
+        $monthlyExpense = Expense::whereMonth(
+            'expense_date',
+            now()->month
+        )->sum('amount');
+
+        return view('expenses.index', compact(
+            'expenses',
+            'totalExpense',
+            'todayExpense',
+            'monthlyExpense'
+        ));
     }
 
     /**
@@ -20,7 +39,7 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        //
+        return view('expenses.create');
     }
 
     /**
@@ -28,7 +47,17 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'amount' => 'required|numeric',
+            'category' => 'required',
+            'expense_date' => 'required|date',
+        ]);
+
+        Expense::create($request->all());
+
+        return redirect('/')
+            ->with('success', 'Expense Added Successfully');
     }
 
     /**
@@ -44,7 +73,7 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
-        //
+        return view('expenses.edit', compact('expense'));
     }
 
     /**
@@ -52,7 +81,17 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, Expense $expense)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'amount' => 'required|numeric',
+            'category' => 'required',
+            'expense_date' => 'required|date',
+        ]);
+
+        $expense->update($request->all());
+
+        return redirect('/')
+            ->with('success', 'Expense Updated Successfully');
     }
 
     /**
@@ -60,6 +99,9 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
-        //
+        $expense->delete();
+
+        return redirect('/')
+            ->with('success', 'Expense Deleted Successfully');
     }
 }
