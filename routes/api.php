@@ -11,3 +11,4 @@ use App\Http\Controllers\ExpenseCheckController;
 
 Route::get('/expense-check', [ExpenseCheckController::class, 'check']);
 Route::get('/weekly-expense', [ExpenseCheckController::class, 'weekly']);
+Route::get('/monthly-report', [ExpenseCheckController::class, 'monthlyReport']);

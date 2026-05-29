@@ -39,5 +39,25 @@ class ExpenseCheckController extends Controller
             'categories' => $categories
         ]);
     }
-    
+
+    public function monthlyReport()
+    {
+        $start = Carbon::now()->subMonth()->startOfMonth();
+        $end = Carbon::now()->subMonth()->endOfMonth();
+
+        $expenses = Expense::whereBetween('created_at', [$start, $end])->get();
+
+        $total = $expenses->sum('amount');
+
+        $categories = $expenses->groupBy('category')->map(function ($items) {
+            return $items->sum('amount');
+        });
+
+        return response()->json([
+            'month' => $start->format('F Y'),
+            'total' => $total,
+            'categories' => $categories
+        ]);
+    }
+
 }
