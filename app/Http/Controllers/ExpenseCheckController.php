@@ -18,4 +18,26 @@ class ExpenseCheckController extends Controller
             'hasExpense' => $exists
         ]);
     }
+
+    public function weekly()
+    {
+        $start = Carbon::now()->subDays(7);
+        $end = Carbon::now();
+
+        $expenses = Expense::whereBetween('created_at', [$start, $end])->get();
+
+        $total = $expenses->sum('amount');
+
+        $categories = $expenses->groupBy('category')->map(function ($items) {
+            return $items->sum('amount');
+        });
+
+        return response()->json([
+            'from' => $start->toDateString(),
+            'to' => $end->toDateString(),
+            'total' => $total,
+            'categories' => $categories
+        ]);
+    }
+    
 }
