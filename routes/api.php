@@ -10,4 +10,4 @@ use App\Http\Controllers\ExpenseCheckController;
 
 
 Route::get('/expense-check', [ExpenseCheckController::class, 'check']);
-Route::get('/weekly-expense', [ExpenseController::class, 'weekly']);
+Route::get('/weekly-expense', [ExpenseCheckController::class, 'weekly']);
